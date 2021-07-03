@@ -20,7 +20,7 @@ const redisClient = redis.createClient(redisRemoteClientOptions)
 const redisStore = require('connect-redis')(session);
 
 console.log("--------------")
-console.log(process.env.REDIS_HOST)
+console.log("PORT =>", process.env.PORT)
 console.log("--------------")
 
 const app = express();
