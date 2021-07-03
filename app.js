@@ -46,7 +46,7 @@ app.set('view engine', 'ejs');
 // database connection
 const dbURI = process.env.MONGO_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
-  .then((result) => { app.listen(PORT) 
+  .then((result) => { app.listen(PORT, '0.0.0.0') 
     console.log('Listening on port', PORT);
   })
   .catch((err) => {}) //console.log(err));
