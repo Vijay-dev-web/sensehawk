@@ -1,40 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/authRoutes')
+const { publicRoutes } = require('./routes/publicRoutes')
+const { privateRoutes } = require('./routes/privateRoutes')
 const cookieParser = require('cookie-parser');
 const { requireAuth, checkUser, checkSession } = require('./middleware/authMiddleware');
-
-// Redis
-
-const session = require('express-session')
-const redis = require('redis');
-const connectRedis = require('connect-redis');
-const { options } = require('./routes/authRoutes');
-const redisRemoteClientOptions = {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT,
-  password: process.env.REDIS_PASSWORD
-}
-const redisClient = redis.createClient(redisRemoteClientOptions)
-
-const redisStore = require('connect-redis')(session);
 
 console.log("--------------")
 console.log("PORT =>", process.env.PORT)
 console.log("--------------")
 
+
 const app = express();
-
-app.use(session({
-  secret: 'redisSecret',
-  name: 'redisSession',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
-  store: new redisStore({ client: redisClient, ttl: 60 * 60 * 1000 }),
-}));
-
-// Port
 app.set('port', (process.env.PORT || 3000));
 
 // middleware
@@ -59,9 +35,11 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCr
   }) //console.log(err));
 
 // routes
-app.get('*', checkUser)
-app.get('/', checkSession, requireAuth, (req, res) => res.render('home'));
-app.get('/success', checkSession, requireAuth, (req, res) => res.render('success'));
+// app.get('*', checkUser)
+app.use(publicRoutes)
+app.use(privateRoutes)
 
-
-app.use(authRoutes)
+app.get('/*', requireAuth, (req, res) => {
+  // TODO: find the path and redirect accordingly
+  res.render('home')
+});

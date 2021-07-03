@@ -1,0 +1,80 @@
+<%- include('partials/header'); -%>
+
+<form>
+  <h2>Find User</h2>
+
+  <label for="query">Name or Contact</label>
+  <input type="text" name="query" required />
+  <div class="name error"></div>
+
+  <!-- <label for="password">Password</label>
+  <input type="password" name="password" required />
+  <div class="password error"></div> -->
+  <button>Find</button>
+</form>
+
+<br/>
+<br/>
+
+<center>
+  <div>
+    Find Results
+  </div>
+
+  <table id="search_results_table">
+      <tr>
+        <td>Name</td>
+        <td>Contact</td>
+        <td>Address</td>
+        <td>Gender</td>
+        <td>Country</td>
+      </tr>
+  </table>
+</center>
+
+<script>
+   const form = document.querySelector('form')
+
+   form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            
+            const query = form.query.value
+
+            try {
+                var tab = document.getElementById('search_results_table')
+
+                tab.innerHTML="<tr><td>Name</td><td>Contact</td><td>Address</td><td>Gender</td><td>Country</td></tr>"
+
+                const res = await fetch('/find', {
+                    method: 'POST',
+                    body: JSON.stringify({ "query": query }),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+
+                const data = await res.json()
+                console.log(data);
+                data.forEach(element => {
+                  var row = tab.insertRow(tab.rows.length);
+                  var nameCell = row.insertCell(0)
+                  var contactCell = row.insertCell(1)
+                  var addressCell = row.insertCell(2)
+                  var genderCell = row.insertCell(3)
+                  var countryCell = row.insertCell(4)
+                  
+                  nameCell.innerHTML = element.name
+                  contactCell.innerHTML = element.contact
+                  addressCell.innerHTML = element.address
+                  genderCell.innerHTML = element.gender
+                  countryCell.innerHTML = element.country
+                });
+
+              } catch (err) {
+                // console.log(err);
+            }
+
+          })
+
+</script>
+
+<%- include('partials/footer'); -%>

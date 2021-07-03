@@ -1,59 +1,57 @@
 <%- include('partials/header'); -%>
 
-<form>
-    <h2>Log In</h2>
+    <form>
+        <h2>Log In</h2>
 
-    <label for="contact">Contact</label>
-    <input type="text" name="contact" required/>
-    <div class="contact error"></div>
+        <label for="contact">Contact</label>
+        <input type="text" name="contact" required />
+        <div class="contact error"></div>
 
-    <label for="password">Password</label>
-    <input type="password" name="password" required/>
-    <div class="password error"></div>  
-    <button>Login</button>
-</form>>
+        <label for="password">Password</label>
+        <input type="password" name="password" required />
+        <div class="password error"></div>
+        <button>Login</button>
+    </form>
 
-<script>
-    const form=document.querySelector('form')
+    <script>
+        const form = document.querySelector('form')
 
-    const contactError = document.querySelector('.contact.error')
-    const passwordError = document.querySelector('.password.error')
+        const contactError = document.querySelector('.contact.error')
+        const passwordError = document.querySelector('.password.error')
 
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault()
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
 
             passwordError.textContent = ''
             contactError.textContent = ''
 
             const contact = form.contact.value
             const password = form.password.value
-            console.log( contact, password );
 
             try {
-                console.log('In login');
                 const res = await fetch('/login', {
                     method: 'POST',
                     body: JSON.stringify({ contact, password }),
                     headers: { 'Content-Type': 'application/json' }
                 })
-                // console.log('Result:' , res);
-                const data = await res.json()     
-                if(data.errors) {
+                const data = await res.json()
+                if (data.errors) {
+                    // console.log(data);
                     passwordError.textContent = data.errors.password
                     contactError.textContent = data.errors.contact
                 }
-                else if(data.user) {
-                    location.assign('/')
+                else if (data.user) {
                     // console.log(data);
-                }   
+                    window.localStorage.setItem("user", data.user)
+                    location.assign('/home')
+                }
 
-                
-
+                // console.log(data);
             } catch (err) {
                 // console.log(err);
             }
-    })
-</script>
+        })
+    </script>
 
-<%- include('partials/footer'); -%>
+    <%- include('partials/footer'); -%>

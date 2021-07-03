@@ -6,14 +6,15 @@ const userSchema = mongoose.Schema({
     contact: {
         type: Number,
         required: true,
-        unique: true,
+        unique: true
         // minlength: [10, 'Contact number should have minimum 10 characters'],
         
     },
 
     name: {
         type: String,
-        required: true,        
+        required: true,
+        lowercase: true
     },
 
 
@@ -50,12 +51,12 @@ userSchema.pre('save', async function(next){
 
 // Static method to login user
 userSchema.statics.login = async function(contact, password){
-    console.log('contact : ', contact);
+    // console.log('contact : ', contact);
     const user = await this.findOne({ contact })
     if(user){        
         const auth = await bcrypt.compare(password, user.password)
         if(auth){
-            console.log('Correct user');
+            // console.log('Correct user');
             return user
         }
         throw Error('incorrect password')

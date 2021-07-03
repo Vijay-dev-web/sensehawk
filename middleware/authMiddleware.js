@@ -1,63 +1,52 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
+const { redisClient } = require('../redis/redisController')
+const { handleErrors } = require('../controller/authController')
+const { promisify } = require("util");
+const redisClientGetAsync = promisify(redisClient.get).bind(redisClient);
 
-const requireAuth = (req, res, next) => {
-    
-    const token = req.cookies.jwt_canbeanything
-
-    //check jwt exists and valid
-
-    if(token){
-        jwt.verify(token, 'jwt secret code', (err, decodedToken) => {
-            if(err){
+const decodeToken = (token, res) => {
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
+            if (err) {
                 console.log(err);
-                res.redirect('/login')
+                return null
             }
-            else{
-                console.log(decodedToken)
-                next()
+            else {
+                return decodedToken
             }
         })
+    } catch (e) {
+        console.log(e)
     }
-    else{
+}
+
+const requireAuth = async (req, res, next) => {
+    const token = req.cookies.auth_token
+    console.log("Token -- In RequireAuth Function => ", token)
+    if (token) {
+        tokenValue = await redisClientGetAsync(token)
+        if (tokenValue && tokenValue == '1') {
+            res.locals.user = null
+            res.redirect('/login?err=blacklisted_token')
+        }
+        else {
+            decodedToken = decodeToken(token, res);
+            console.log("Token test => ", decodedToken)
+            if (decodedToken == null) {
+                res.locals.user = null
+                res.redirect('/login')
+            }
+            else {
+                res.locals.user = decodedToken
+                next()
+            }
+        }
+    }
+    else {
+        res.locals.user = null
         res.redirect('/login')
     }
 }
 
-const checkUser = (req, res, next) => {
-
-    const token = req.cookies.jwt_canbeanything
-    
-    if(token) {
-    jwt.verify(token, 'jwt secret code', async (err, decodedToken) => {
-        if(err){
-            res.locals.user = null
-            next()
-        }
-        else {
-            const user = await User.findById(decodedToken.id)
-            res.locals.user = user
-            next()
-        }
-    })
-
-    } else {
-        res.locals.user = null
-        next()
-    }
-
-
-}
-
-const checkSession = ((req, res, next) => {
-    if(req.session.key){
-        console.log('Checking Session');
-        next()
-    } else {
-        // res.redirect.json('Please login first').redirect('/login')
-        // res.redirect('/login')
-        res.json('Unauthorised user')
-    }
-})
-
-module.exports = { requireAuth, checkUser, checkSession }
+module.exports = { requireAuth }

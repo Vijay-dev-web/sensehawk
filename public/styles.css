@@ -135,3 +135,22 @@ footer{
   margin-top: 120px;
   color: #aaa;
 }
+
+#search_results_table {
+  border-collapse: collapse;
+  border: 1 solid;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+#search_results_table {
+  border: 1px solid black;
+}
+
+#search_results_table td {
+  border: 1px solid black;
+  flex: 1 100%;
+}
