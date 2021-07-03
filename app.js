@@ -4,7 +4,8 @@ const authRoutes = require('./routes/authRoutes')
 const cookieParser = require('cookie-parser');
 const { requireAuth, checkUser, checkSession } = require('./middleware/authMiddleware');
 const PORT = process.env.PORT;
-// Redis 
+
+// Redis
 
 const session = require('express-session')
 const redis = require('redis');
@@ -18,6 +19,10 @@ const redisRemoteClientOptions = {
 const redisClient = redis.createClient(redisRemoteClientOptions)
 
 const redisStore = require('connect-redis')(session);
+
+console.log("--------------")
+console.log(process.env.REDIS_HOST)
+console.log("--------------")
 
 const app = express();
 
