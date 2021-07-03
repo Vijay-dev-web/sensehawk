@@ -21,7 +21,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
-  store: new redisStore({ host: 'localhost', port: 6379, client: redisClient, ttl: 60 * 60 * 1000 }),
+  store: new redisStore({ host: 'localhost', port: process.env.REDIS_PORT, client: redisClient, ttl: 60 * 60 * 1000 }),
 }));
 
 // middleware
