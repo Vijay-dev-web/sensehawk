@@ -8,21 +8,26 @@ const PORT = process.env.PORT;
 
 const session = require('express-session')
 const redis = require('redis');
-const connectRedis = require('connect-redis')
-const redisClient = redis.createClient()
+const connectRedis = require('connect-redis');
+const { options } = require('./routes/authRoutes');
+const redisRemoteClientOptions = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD
+}
+const redisClient = redis.createClient(redisRemoteClientOptions)
+
 const redisStore = require('connect-redis')(session);
 
 const app = express();
 
-console.log(process.env.REDIS_HOST, "HOST")
-console.log(process.env.REDIS_PORT, "REDIS_PORT")
 app.use(session({
   secret: 'redisSecret',
   name: 'redisSession',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }, // Note that the cookie-parser module is no longer needed
-  store: new redisStore({ host: process.env.REDIS_HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 60 * 60 * 1000 }),
+  store: new redisStore({ client: redisClient, ttl: 60 * 60 * 1000 }),
 }));
 
 // middleware
