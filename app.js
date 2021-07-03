@@ -54,7 +54,9 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCr
         console.log('App is running, server is listening on port ', app.get('port'));
     })
   })
-  .catch((err) => {}) //console.log(err));
+  .catch((err) => {
+    console.log(err)
+  }) //console.log(err));
 
 // routes
 app.get('*', checkUser)
