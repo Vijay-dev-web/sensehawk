@@ -14,7 +14,8 @@ const redisStore = require('connect-redis')(session);
 
 const app = express();
 
-
+console.log(process.env.REDIS_HOST, "HOST")
+console.log(process.env.REDIS_PORT, "REDIS_PORT")
 app.use(session({
   secret: 'redisSecret',
   name: 'redisSession',
