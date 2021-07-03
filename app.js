@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes')
 const cookieParser = require('cookie-parser');
 const { requireAuth, checkUser, checkSession } = require('./middleware/authMiddleware');
-const PORT = process.env.PORT;
 
 // Redis
 
@@ -35,6 +34,9 @@ app.use(session({
   store: new redisStore({ client: redisClient, ttl: 60 * 60 * 1000 }),
 }));
 
+// Port
+app.set('port', (process.env.PORT || 3000));
+
 // middleware
 app.use(express.static('public'));
 app.use(express.json())
@@ -46,8 +48,11 @@ app.set('view engine', 'ejs');
 // database connection
 const dbURI = process.env.MONGO_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
-  .then((result) => { app.listen(PORT, '0.0.0.0') 
-    console.log('Listening on port', PORT);
+  .then((result) => {
+    console.log('Mongo connection established...');
+    app.listen(app.get('port'), function() {
+        console.log('App is running, server is listening on port ', app.get('port'));
+    })
   })
   .catch((err) => {}) //console.log(err));
 
