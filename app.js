@@ -23,6 +23,7 @@ app.set('view engine', 'ejs');
 
 // database connection
 const dbURI = process.env.MONGO_URI;
+console.log(dbURI);
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
   .then((result) => {
     console.log('Mongo connection established...');
@@ -43,3 +44,5 @@ app.get('/*', requireAuth, (req, res) => {
   // TODO: find the path and redirect accordingly
   res.render('home')
 });
+
+

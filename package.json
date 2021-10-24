@@ -16,10 +16,17 @@
     "redis": "^3.1.2",
     "validator": "^13.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^23.6.0",
+    "supertest": "^6.1.6"
+  },
   "scripts": {
     "start": "node app.js",
-    "dev": "env-cmd -f config/dev.env node app.js"
+    "dev": "env-cmd -f config/dev.env node app.js",
+    "test": "env-cmd -f config/test.env jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "",
